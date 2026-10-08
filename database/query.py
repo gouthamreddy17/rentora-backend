@@ -89,4 +89,40 @@ def get_item_by_item_id(item_id):
             return result
         except Exception as e:
             return f"something went wrong in get item by item_id : {e}"
+def create_offer(item_id,bidder_id,amount,start_date,end_date,message):
+    connection=DatabaseConnection()
+    if isinstance(connection, str):
+            print(connection)
+            return False
+    else:
+        try:
+            cursor=connection.cursor()
+            query="""INSERT INTO offers
+                    (item_id, bidder_id, amount, start_date,end_date,message)
+                    VALUES (%s, %s, %s, %s, %s,%s)"""
+            cursor.execute(query,(item_id,bidder_id,amount,start_date,end_date,message))
+            connection.commit()
+            cursor.close()
+            connection.close()
+            return True
+        except Exception as e:
+            return f"something went wrong in create_offer {e}"
+    
+
+def get_offer_by_item_id_user_id(item_id,bidder_id):
+    connection=DatabaseConnection()
+    if isinstance(connection, str):
+            print(connection)
+            return False
+    else:
+        try:
+            cursor=connection.cursor(dictionary=True)
+            query="""select * from offers where item_id=%s and bidder_id=%s"""
+            cursor.execute(query,(item_id,bidder_id))
+            result=cursor.fetchone()
+            cursor.close()
+            connection.close()
+            return result
+        except Exception as e:
+            return f"Something went wrong in get offer by using item_id and user_id {e}"
     

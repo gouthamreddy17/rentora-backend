@@ -79,6 +79,33 @@ def get_item(item_id):
     return jsonify({
         'message':"items not found"
     }),404
+
+@app.route('/request_bid',methods=['POST'])
+def request_bid():
+    data=request.get_json()
+    item_id=data.get('item_id')
+    bidder_id=data.get('bidder_id')
+    amount=data.get('amount')
+    start_date=data.get('start_date')
+    end_date=data.get('end_date')
+    message=data.get('message')
     
+    if not item_id or not bidder_id or not amount:
+        return jsonify({
+            'message':'Required details are missing'
+        }),400
+    record=get_offer_by_item_id_user_id(item_id,bidder_id)
+    if record:
+        return jsonify({
+            'message':"Request seneded already wait for owner response"
+        }),400
+    result=create_offer(item_id,bidder_id,amount,start_date,end_date,message)
+    if result==True:
+        return jsonify({
+            'message':"Bid request sent sucessfully"
+        }),201
+    return jsonify({
+        'message':result
+    }),400
 if __name__=="__main__":
     app.run(host='0.0.0.0',port=5000,debug=True)
