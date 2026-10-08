@@ -70,5 +70,15 @@ def login():
 def items():
     result=get_items_from_db()
     return jsonify(result)
+
+@app.route('/items/<int:item_id>')
+def get_item(item_id):
+    item=get_item_by_item_id(item_id)
+    if item:
+        return jsonify(item),200
+    return jsonify({
+        'message':"items not found"
+    }),404
+    
 if __name__=="__main__":
     app.run(host='0.0.0.0',port=5000,debug=True)

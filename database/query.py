@@ -70,4 +70,23 @@ def get_items_from_db():
         except Exception as e:
             return f"something went wrong in get items from db: {e}"
         
-        
+def get_item_by_item_id(item_id):
+    connection=DatabaseConnection()
+    if isinstance(connection, str):
+            print(connection)
+            return False
+    else:
+        try:
+            cursor=connection.cursor(dictionary=True)
+            query="""SELECT items.*, users.name AS owner_name
+                    FROM items
+                    JOIN users ON items.owner_id = users.user_id
+                    WHERE items.item_id = %s"""
+            cursor.execute(query,(item_id,))
+            result=cursor.fetchone()
+            cursor.close()
+            connection.close()
+            return result
+        except Exception as e:
+            return f"something went wrong in get item by item_id : {e}"
+    
